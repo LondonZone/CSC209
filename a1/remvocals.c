@@ -55,10 +55,8 @@ int main(int argc, char *argv[]){
 		short temp1;
 		short temp2;
 		int computed;
-		int flag = 1;
-		
-		
-		while (flag == 1) {
+				
+		while (!feof(fp)) {
 			/* shorts are read one at a time
 				1) first short read is left
 				2) second short read is right
@@ -66,19 +64,13 @@ int main(int argc, char *argv[]){
 			temp1 = fread(&bufferLeft, sizeof(short), 1, fp);
 			temp2 = fread(&bufferRight,  sizeof(short), 1, fp);
 		
-			if(temp1 != NULL && temp2 != NULL){
-				
+							
 			
 			//Write two copies of combined to the output file.
 			computed = (bufferLeft[0] - bufferRight[0])/2;
 			fwrite(&computed, sizeof(short), 1, fpDest);
 			fwrite(&computed, sizeof(short), 1, fpDest);
-			
-			}else {
-				flag++;// terminates loop condition
-			}
-			
-			
+
 			
 		}
 			

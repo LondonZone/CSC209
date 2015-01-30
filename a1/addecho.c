@@ -49,7 +49,6 @@ void setEcho(short echoBuffer[], short current[], int delay){
 }
 
 void setSilence(short current[], int delay, int x){
-	int difference = delay - x;
 	for (int i = x; i < delay; i++) {
 		current[i] = 0;
 
@@ -90,7 +89,7 @@ int main(int argc, char *argv[]){
 	    }
 	
 
-	printf("%d\n%d\n",delay,volume_scale);
+	//printf("%d\n%d\n",delay,volume_scale);
 	
 	FILE *fp, *fpDest;
 
@@ -125,15 +124,21 @@ int main(int argc, char *argv[]){
 	//short mixed[delay];
 	
 	//read and write samples before delay
-	fread(echoBuffer, sizeof(short), delay, fp);
+	int position = fread(echoBuffer, sizeof(short), delay, fp);
 	fwrite(echoBuffer, sizeof(short), delay, fpDest);
 	
+	
+	//case for buffer currently at EOF
+	if(position == feof(fp)){
+		fwrite(echoBuffer, sizeof(short), delay, fpDest);
+	}
 	int i;
 	int x;
  	while(!feof(fp)) {
 		//read samples once delay is reached
 		x = fread(current, sizeof(short), delay, fp);
 	
+		//add zeros for remaining bits
 		int difference = delay - x;
 		if(difference > 0){
 			setSilence(current, delay, x);
@@ -144,20 +149,16 @@ int main(int argc, char *argv[]){
 		for (i=0; i < delay; i++) {
 			mixed[i] = current[i] + (echoBuffer[i]/volume_scale);
 		}
-		fwrite(&mixed, sizeof(short), delay, fpDest); //up to index zeros		//position = computeEcho(current, echoBuffer, mixed, volume_scale, delay);
-		//write echobuffer before writing mix
-		
-		
+		fwrite(&mixed, sizeof(short), delay, fpDest); //up to index zeros		//write echobuffer before writing mix
 		setEcho(echoBuffer, current, delay);
 		
 				
 
 	}
-	printf("%d",x);
+	//printf("%d",x);
 	/*	3. adding the remaining echo */
 	int k;
 	for(k=0; k < x; k++) {
-		//scaleEcho(echoBuffer, volume_scale, delay-1);
 		short temp = (echoBuffer[x]/volume_scale);
 		fwrite(&temp, sizeof(short), 1, fpDest);
 		
