@@ -121,6 +121,7 @@ int main(int argc, char *argv[]){
 	//short *Buffer = malloc(sizeof(delay));
 	short current[delay];
 	short echoBuffer[delay];
+	short mixed[delay];
 	//short mixed[delay];
 	
 	//read and write samples before delay
@@ -136,10 +137,9 @@ int main(int argc, char *argv[]){
 		
 		/*2) start mixing in samples from the echobuffer */
 		for (i=0; i < delay; i++) {
-			short mixed = current[0] + (echoBuffer[i]/volume_scale);
-			fwrite(&mixed, sizeof(short), delay, fpDest); //up to index zeros
+			mixed[i] = current[i] + (echoBuffer[i]/volume_scale);
 		}
-		//position = computeEcho(current, echoBuffer, mixed, volume_scale, delay);
+		fwrite(&mixed, sizeof(short), delay, fpDest); //up to index zeros		//position = computeEcho(current, echoBuffer, mixed, volume_scale, delay);
 		//write echobuffer before writing mix
 		
 		
