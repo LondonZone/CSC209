@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
 		
 		 fclose(fp);
 		 fclose(fpDest);
-
+return 0;
 }
 
 
