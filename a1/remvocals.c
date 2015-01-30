@@ -51,9 +51,7 @@ int main(int argc, char *argv[]){
 		fwrite(&buff_head, 44 * sizeof(short), 1, fpDest);
 
 		
-		//int left = 0; // used to keep track of shorts
-		short temp1;
-		short temp2;
+			
 		int computed;
 				
 		while (!feof(fp)) {
@@ -61,8 +59,8 @@ int main(int argc, char *argv[]){
 				1) first short read is left
 				2) second short read is right
 			*/
-			temp1 = fread(&bufferLeft, sizeof(short), 1, fp);
-			temp2 = fread(&bufferRight,  sizeof(short), 1, fp);
+			fread(&bufferLeft, sizeof(short), 1, fp);
+			fread(&bufferRight,  sizeof(short), 1, fp);
 		
 							
 			
