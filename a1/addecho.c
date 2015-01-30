@@ -50,8 +50,8 @@ void setEcho(short echoBuffer[], short current[], int delay){
 
 void setSilence(short current[], int delay, int x){
 	int difference = delay - x;
-	for (int i = 0; i < difference; i++) {
-		current[delay - difference + i] = 0;
+	for (int i = x; i < delay; i++) {
+		current[i] = 0;
 
 	}
 	
@@ -134,7 +134,12 @@ int main(int argc, char *argv[]){
 		//read samples once delay is reached
 		x = fread(current, sizeof(short), delay, fp);
 	
-		
+		int difference = delay - x;
+		if(difference > 0){
+			setSilence(current, delay, x);
+
+					
+		}
 		/*2) start mixing in samples from the echobuffer */
 		for (i=0; i < delay; i++) {
 			mixed[i] = current[i] + (echoBuffer[i]/volume_scale);
@@ -144,8 +149,8 @@ int main(int argc, char *argv[]){
 		
 		
 		setEcho(echoBuffer, current, delay);
-		setSilence(current, delay, x);
-		i++;
+		
+				
 
 	}
 	printf("%d",x);
