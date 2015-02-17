@@ -12,15 +12,15 @@ extern struct block *freelist;
 
 /* Prints each element of the list using the format string given below:*/
 void print_list(struct block *list) {
-    struct block *temp  = malloc(sizeof(struct block));
-    if(temp == NULL) {
-        perror("Malloc");
-        exit(1);
-    }
-    temp = list; //copy list so its not modified
+//    struct block *temp  = malloc(sizeof(struct block));
+//    if(temp == NULL) {
+//        perror("Malloc");
+//        exit(1);
+//    }
+//    temp = list; //copy list so its not modified
     while (list != NULL) {
-      printf("    [addr: %p, size: %d]\n", temp->addr, temp->size);
-      temp = temp->next; 
+      printf("    [addr: %p, size: %d]\n", list->addr, list->size);
+      list = list->next; 
      
     }  
     free(list);
