@@ -121,30 +121,51 @@ void mem_clean(){
  ============================================================================
  */
 void *smalloc(unsigned int nbytes) {
-    if (nbytes > freelist->size) {
+    struct block *current = freelist;
+    struct block *prev;
+
+    //Find block that has enough room to allocate memory
+    prev = NULL;
+    while(current != NULL && nbytes > current->size){
+         prev = current;
+         current = current->next;
+    }
+
+    // If no block in freelist have space to allocate nbytes
+    if (current == NULL) {
         return NULL;
-        
-    }else if (nbytes == freelist->size) {
-        allocated_list = freelist;
+    
+    }else if (nbytes == current->size) {
+        if(prev->next != NULL){ 
+            prev->next = current->next;
+            
+        }else{
+            freelist = current->next;
+        }
+        //adding new block to Head of LL
+        //current->next points to node added to head
+        current->next = allocated_list; 
+        allocated_list = current; 
         return allocated_list->addr;
         
     }else{
-        //reassign size
+        //Case 3 Partition Block:  nbytes < current->size
+        struct block *newNode = malloc(sizeof(struct block));
+            if(newNode == NULL) {
+                 perror("Malloc");
+                 exit(1);
+            }
+        //copy of LinkedList
+        struct block *temp = allocated_list; 
+        newNode->addr = freelist->addr;
+        newNode->next = temp; // next points to node added to front of LL
+        newNode->size = nbytes;
+        allocated_list = newNode;
+
+        //reassign size and address
         freelist->size = (freelist->size - nbytes);
-        //initialize new block for allocated_list
-        struct block *node = malloc(sizeof(struct block));
-        if(node == NULL) {
-            perror("Malloc");
-            exit(1);
-        }
-        struct block *temp = allocated_list; //copy of LL
-        node->addr = freelist->addr;
-        node->next = temp; // next points to node added to front of LL
-        node->size = nbytes;
-        allocated_list = node;
-        
         freelist->addr = (freelist->addr + nbytes);
-        return node->addr;
+        return newNode->addr;
     }
     
     
@@ -191,7 +212,6 @@ int sfree(void *addr) {
             }else{
                 allocated_list = NULL;
             }
-            
             
             /*Set the previous node's next pointer to point
              to the currentNode's next (ie the block we wish to free) */
