@@ -63,7 +63,7 @@ void mem_init(int size) {
         exit(1);
     }
     
-    node->addr = &mem;
+    node->addr = mem;
     node->next = NULL;
     node->size = size;//access and assign size
     freelist = node;
@@ -131,7 +131,7 @@ void *smalloc(unsigned int nbytes) {
          prev = current;
          current = current->next;
     }
-    temp = searchSize(current, nbytes);
+   // temp = searchSize(current, nbytes);
     // If no block in freelist have space to allocate nbytes
     if (current == NULL) {
         return NULL;
@@ -263,16 +263,16 @@ struct block *insert(struct block *current, struct block *dest){
 
   
 
-struct  block *searchAddress(struct block *list, void *addr){
-/*Find block that has enough room to allocate memory */
+/*struct  block *searchAddress(struct block *list, void *addr){
+Find block that has enough room to allocate memory 
     struct block *newNode;
-    for(newNode = list; newNode !=NULL; newNode = newNode->next ){
-     && list->addr < newNode->addr)
+    for(newNode = list; newNode !=NULL; newNode = newNode->next 
+     && list->addr < newNode->addr) {
         list = list->next;       
     }
     return list;
 }
-
+*/
 struct  block *searchSize(struct block *list, int nbytes){
     
     
