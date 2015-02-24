@@ -44,3 +44,15 @@ void write_to_mem(int size, char *ptr, char value);
 
 /* prints the contents of allocated memory */
 void print_mem();
+
+/*  Inserted Node into ordered list*/
+struct block *insert(struct block *current, struct block *dest);
+
+/* Finds block that has enough room to allocate memory */
+struct  block *searchAddress(struct block *list, void *addr);
+
+/* Finds block that has enough room to allocate memory */
+struct  block *searchSize(struct block *list, int nbytes);
+
+
+

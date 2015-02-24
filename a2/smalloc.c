@@ -59,7 +59,7 @@ void mem_init(int size) {
     //allocated_list = &addr;
     struct block *node = malloc(sizeof(struct block));
     if(node == NULL) {
-        perror("Malloc");
+        perror("Malloc Failed");
         exit(1);
     }
     
@@ -94,21 +94,22 @@ void mem_init(int size) {
  ============================================================================
  */
 void mem_clean(){
-    struct block *currentNode = freelist;
+  /*  struct block *currentNode = freelist;
+    struct block *currentNode2 = allocated_list;
     
     while(currentNode != NULL){
-        currentNode = currentNode->next;
+        freelist = freelist->next;
         free(currentNode);
-        freelist = currentNode;
+
     }
     
-    currentNode = allocated_list;
-    while(currentNode != NULL){
-        currentNode = currentNode->next;
+    //currentNode = allocated_list;
+    while(currentNode2 != NULL){
+        currentNode2 = currentNode2->next;
         free(allocated_list);
-        allocated_list = currentNode;
+        allocated_list = currentNode2;
     }
-    
+    */
     
 }
 
@@ -122,7 +123,7 @@ void mem_clean(){
  */
 void *smalloc(unsigned int nbytes) {
     struct block *current = freelist;
-    struct block *prev;
+    struct block *prev, *temp;
 
     //Find block that has enough room to allocate memory
     prev = NULL;
@@ -130,7 +131,7 @@ void *smalloc(unsigned int nbytes) {
          prev = current;
          current = current->next;
     }
-
+    temp = searchSize(current, nbytes);
     // If no block in freelist have space to allocate nbytes
     if (current == NULL) {
         return NULL;
@@ -142,17 +143,17 @@ void *smalloc(unsigned int nbytes) {
         }else{
             freelist = current->next;
         }
-        //adding new block to Head of LL
-        //current->next points to node added to head
+        //insert new block into head of allocatedlist
+        //current->next is a pointer to the block added
         current->next = allocated_list; 
-        allocated_list = current; 
+        allocated_list = current;  
         return allocated_list->addr;
         
     }else{
         //Case 3 Partition Block:  nbytes < current->size
         struct block *newNode = malloc(sizeof(struct block));
             if(newNode == NULL) {
-                 perror("Malloc");
+                 perror("Malloc Failed");
                  exit(1);
             }
         //copy of LinkedList
@@ -185,29 +186,27 @@ void *smalloc(unsigned int nbytes) {
 
 int sfree(void *addr) {
     struct block *currentNode = allocated_list;
-    struct block *prev;
-    struct block *temp;
+    struct block *prev, * temp;
     //struct block *free = freelist;
-    
+
+
     //check validity of memory address
-    if(addr == NULL){
-        return -1;
-        
-    }
     prev = NULL;
     while(currentNode != NULL){
         if(currentNode->addr == addr){
-            //Save the node we wish to delete in a temporary pointer
+            //Save the next pointer to the node we wish to delete in a temporary pointer
             temp = currentNode->next;
-            freelist->size += currentNode->size;
-            //munmap(currentNode->addr,currentNode->size);
-            
+
+            //insert node to be removed to freelist
+            freelist = insert(currentNode, freelist);
+            //freelist->size += currentNode->size;
+    
             if(temp != NULL){
                 currentNode->next = temp->next;
-                if(prev != NULL){
+                if(prev != NULL){       /* addr belongs to the first node */
                     prev->next = temp;
                 }else{
-                    prev = temp;
+                    prev = temp;   /* addr belongs to some other node*/
                 }
             }else{
                 allocated_list = NULL;
@@ -215,8 +214,6 @@ int sfree(void *addr) {
             
             /*Set the previous node's next pointer to point
              to the currentNode's next (ie the block we wish to free) */
-            //freelist->size += currentNode->size;
-            //munmap(currentNode->addr,currentNode->size);
             return 0;
             
         }else{
@@ -233,10 +230,58 @@ int sfree(void *addr) {
 
 /*
  ============================================================================
- Helper Function for sfree()
- Get the block from memory address: addr
+ Helper Function to insert a node to head of LL;
+ returns a pointer to newNode added to the front of list.
  ============================================================================
  */
+
+struct block *insert(struct block *current, struct block *dest){
+    //struct block *temp = current;
+    
+    struct block *newNode = malloc(sizeof(struct block));
+    if(newNode == NULL) {
+        perror("Malloc Failed");
+        exit(1);
+    }
+
+    newNode->addr = current->addr; //address of the node you are inserting
+    newNode->size = current->size;
+    newNode->next = dest;
+    dest = newNode;
+    return dest;
+}
+    /* Determine where newNode belongs in list */
+    /* Locate the node before the point of insertion */
+    /*while(temp->next !=NULL && temp->addr < newNode->addr){
+       
+        temp = temp->next;       
+  
+    }
+    newNode->next = temp->next;
+    temp->next = newNode;
+*/
+
+  
+
+struct  block *searchAddress(struct block *list, void *addr){
+/*Find block that has enough room to allocate memory */
+    struct block *newNode;
+    for(newNode = list; newNode !=NULL; newNode = newNode->next ){
+     && list->addr < newNode->addr)
+        list = list->next;       
+    }
+    return list;
+}
+
+struct  block *searchSize(struct block *list, int nbytes){
+    
+    
+    //Find block that has enough room to allocate memory
+    while(list != NULL && nbytes > list->size){
+         list = list->next;
+    }
+    return list;
+}
 
 /*search for the struct with addr and 
  keep pointer to last visited block */
@@ -246,13 +291,7 @@ int sfree(void *addr) {
 /* allocatedlist remains unordered, so the node pointing
  to the address freed will not point to the next node*/
 
-//end of getBlock
 
-// void freeList(struct node* Node)
-// {
-//     if(Node->next) freeList(currentNode->next);
-//     free(currentNode);
-// }
 
 
 
