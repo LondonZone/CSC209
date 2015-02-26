@@ -219,7 +219,7 @@ int sfree(void *addr) {
             }else{
                 allocated_list = NULL;
             }
-            
+            free(currentNode);
             /*Set the previous node's next pointer to point
              to the currentNode's next (ie the block we wish to free) */
             return 0;
@@ -244,20 +244,23 @@ int sfree(void *addr) {
  */
 
 struct block *insert(struct block *current, struct block *dest){
-    //struct block *temp = current;
+   struct block *newNode = malloc(sizeof(struct block));
+            if(newNode == NULL) {
+                 perror("Malloc Failed");
+                 exit(1);
+            }
     
-    struct block *newNode = malloc(sizeof(struct block));
-    if(newNode == NULL) {
-        perror("Malloc Failed");
-        exit(1);
-    }
-
     newNode->addr = current->addr; //address of the node you are inserting
     newNode->size = current->size;
     newNode->next = dest;
     dest = newNode;
     return dest;
+
+  
+     
+
 }
+
     /* Determine where newNode belongs in list */
     /* Locate the node before the point of insertion */
     /*while(temp->next !=NULL && temp->addr < newNode->addr){
