@@ -94,22 +94,30 @@ void mem_init(int size) {
  ============================================================================
  */
 void mem_clean(){
-  /*  struct block *currentNode = freelist;
-    struct block *currentNode2 = allocated_list;
+  // struct block *currentNode = freelist;
+  // struct block *currentNode2 = allocated_list;
+   struct block *temp , *next;
+   struct block *temp2 , *next2;
     
-    while(currentNode != NULL){
-        freelist = freelist->next;
-        free(currentNode);
-
+    
+    while(freelist != NULL){
+        //freelist = freelist->next;
+        temp  =  freelist;
+        next  = freelist->next;  
+        freelist  = freelist->next;
+	free(temp);
+        temp = next;
     }
     
-    //currentNode = allocated_list;
-    while(currentNode2 != NULL){
-        currentNode2 = currentNode2->next;
-        free(allocated_list);
-        allocated_list = currentNode2;
+    
+    while(allocated_list != NULL){
+	temp2 = allocated_list;
+        next2  = allocated_list->next;
+        allocated_list  = allocated_list->next;
+	free(temp2);
+        temp2 = next2;
     }
-    */
+    
     
 }
 
@@ -273,6 +281,7 @@ Find block that has enough room to allocate memory
     return list;
 }
 */
+/*
 struct  block *searchSize(struct block *list, int nbytes){
     
     
@@ -282,7 +291,7 @@ struct  block *searchSize(struct block *list, int nbytes){
     }
     return list;
 }
-
+*/
 /*search for the struct with addr and 
  keep pointer to last visited block */
 //free block at memory address addr
