@@ -186,26 +186,28 @@ int sfree(void *addr) {
 
 
     //check validity of memory address
-    prev = NULL;
+     prev = NULL;
     while(currentNode != NULL){
         if(currentNode->addr == addr){
             //Save the next pointer to the node we wish to delete in a temporary pointer
             temp = currentNode->next;
 
             //insert node to be removed to freelist
-            (void) insertOrdered(currentNode,freelist);
+	    (void) insertOrdered(currentNode,freelist);
+	    
             //bypass block we want to free.
-            if(temp != NULL){
+            if(temp != NULL){ // single node
                 currentNode->next = temp->next;
                 if(prev != NULL){       /* addr belongs to the first node */
                     prev->next = temp;
                 }else{
-                    prev = temp;   /* addr belongs to some other node*/
+		  prev = currentNode->next;  /* addr belongs to some other node*/
                 }
             }else{
-                allocated_list = NULL;
+	      // allocated_list = NULL;
+	      prev->next = NULL;
             }
-            free(currentNode);
+	    free(currentNode);
           
             return 0;
             

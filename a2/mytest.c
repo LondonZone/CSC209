@@ -24,7 +24,7 @@ int main(void) {
     int i;
 
     /* Call smalloc 4 times */
-
+   
    for(i = 0; i < 4; i++) {
         int num_bytes = (i+1) * 10;
     
@@ -49,6 +49,8 @@ int main(void) {
     print_free();
     printf("Contents of allocated memory:\n");
     print_mem();
+
+
     mem_clean();
     return 0;
     
@@ -107,7 +109,34 @@ int main(void) {
     //printf("Call Smalloc() 4 times then sfree():\n");
     //printf("====================================\n\n");
     
+    /* char  *ptr[1]; */
+    /* int j; */
+    /* int num_bytes = SIZE; */
+    /* for(j = 0; j < 2; j++) */
+    /*  { */
+    /*    ptr[j] = smalloc(num_bytes); */
+    /*   write_to_mem(num_bytes,ptr[j],j); */
+    /*   } */
+
+    /* printf("List of allocated blocks:\n"); */
+    /* print_allocated(); */
+    /* printf("List of free blocks:\n"); */
+    /* print_free(); */
+    /* printf("Contents of allocated memory:\n"); */
+    /* print_mem(); */
     
+    /* printf("freeing %p result = %d\n", ptr[0], sfree(ptr[0])); */
+    
+    /* printf("List of allocated blocks:\n"); */
+    /* print_allocated(); */
+    /* printf("List of free blocks:\n"); */
+    /* print_free(); */
+    /* printf("Contents of allocated memory:\n"); */
+    /* print_mem(); */
+
+    /* mem_clean(); */
+    /* return 0; */
+
 
 
 
