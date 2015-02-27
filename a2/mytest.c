@@ -9,7 +9,12 @@
 #define SIZE 4096 
 
 
-/* Complicated test for smalloc and sfree. */
+/* Complicated test for smalloc and sfree.
+ * Smalloc 4 block
+ * then calls sfree() twice
+ * tests that sfree() inserts the block back to freelist by increasing address order
+
+ */
 
 int main(void) {
 

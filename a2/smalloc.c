@@ -1,9 +1,9 @@
 /*
  ============================================================================
  Name        : smalloc.c
- Author      : David London
+ Author      : David London-Schacht
  Version     : 1
- Copyright   : copyright David London 2015
+ Copyright   : copyright David London-Schacht 2015
  Description : CSC209 Assignment 2
  ============================================================================
  */
@@ -22,9 +22,11 @@
  
  mem: stores the starting address of the memory region that is reserved by mem_init.
  
- freelist: A linked list of struct blocks that identify the portions of the memory   region that are free (not in use). Blocks in this list are stored in increasing address order.
+ freelist: A linked list of struct blocks that identify the portions of the memory  
+ region that are free (not in use). Blocks in this list are stored in increasing address order.
  
- allocated_list: A linked list of struct blocks that identify portions of memory that have been reserved by calls to smalloc. When a block is allocated it is placed at the front of this list, so the list is unordered.
+ allocated_list: A linked list of struct blocks that identify portions of memory that 
+have been reserved by calls to smalloc. When a block is allocated it is placed at the front of this list, so the list is unordered.
  
  ============================================================================
  */
@@ -56,8 +58,7 @@ void mem_init(int size) {
         exit(1);
     }
     
-    //freelist.
-    //allocated_list = &addr;
+    //initialize linkedlist
     struct block *node = malloc(sizeof(struct block));
     if(node == NULL) {
         perror("Malloc Failed");
@@ -68,41 +69,29 @@ void mem_init(int size) {
     node->next = NULL;
     node->size = size;//access and assign size
     freelist = node;
-    //printf(node->addr);
     
-    allocated_list = NULL; // check when mem_init is called is it only called once?
+    //initialize  allocated_list to NULL after mem_init completes
+    allocated_list = NULL; 
     
-    
-    /* NOTE: this function is incomplete
-     *To complete mem_init, you need to create a block node with the starting
-     address as given by mmap.
-     
-     Therefore, after mem_init completes, the allocated_list will be empty (but initialized!), and freelist will have one block in it where the address contained in that block is the address returned by mmap.
-     
-     The starting address for the new mapping is specified in addr, which is NULL
-     */
     
 }
 
 /*
  ============================================================================
- - Calls free() to free all the dynamically allocated memory to:	 (allocated_list and  freelist)
+ - Calls free() to free all the dynamically allocated memory to:  
+   (allocated_list and  freelist)
  
  - used by the program before exiting, to prevent a memory leak.
 	
- - (The valgrind program must show all heap memory freed,
- otherwise you have a memory leak. See below.)
  ============================================================================
  */
 void mem_clean(){
-  // struct block *currentNode = freelist;
-  // struct block *currentNode2 = allocated_list;
+ 
    struct block *temp , *next;
    struct block *temp2 , *next2;
     
-    
+   //Traverse freelist and free memory allocated to each node
     while(freelist != NULL){
-        //freelist = freelist->next;
         temp  =  freelist;
         next  = freelist->next;  
         freelist  = freelist->next;
@@ -110,7 +99,7 @@ void mem_clean(){
         temp = next;
     }
     
-    
+    //Traverse allocated_list  and free memory allocated to each node
     while(allocated_list != NULL){
 	temp2 = allocated_list;
         next2  = allocated_list->next;
@@ -140,11 +129,11 @@ void *smalloc(unsigned int nbytes) {
          prev = current;
          current = current->next;
     }
-   // temp = searchSize(current, nbytes);
-    // If no block in freelist have space to allocate nbytes
+  
+    // Case 1:  If no block in freelist have space to allocate nbytes
     if (current == NULL) {
         return NULL;
-    
+    //Case 2:  block of exactly the required size
     }else if (nbytes == current->size) {
         if(prev->next != NULL){ 
             prev->next = current->next;
@@ -159,7 +148,7 @@ void *smalloc(unsigned int nbytes) {
         return allocated_list->addr;
         
     }else{
-        //Case 3 Partition Block:  nbytes < current->size
+        //Case 3  nbytes < current->size
         struct block *newNode = malloc(sizeof(struct block));
             if(newNode == NULL) {
                  perror("Malloc Failed");
@@ -168,7 +157,7 @@ void *smalloc(unsigned int nbytes) {
         //copy of LinkedList
         struct block *temp = allocated_list; 
         newNode->addr = freelist->addr;
-        newNode->next = temp; // next points to node added to front of LL
+        newNode->next = temp; // node added to the head of LL
         newNode->size = nbytes;
         allocated_list = newNode;
 
@@ -181,9 +170,7 @@ void *smalloc(unsigned int nbytes) {
     
     
     
-    // address of node added
-    
-}//end of smalloc
+}
 
 /*
  ============================================================================
@@ -191,7 +178,6 @@ void *smalloc(unsigned int nbytes) {
 	so that it might be reused later.
  ============================================================================
  */
-//typedef currentNode curr;
 
 int sfree(void *addr) {
     struct block *currentNode = allocated_list;
@@ -208,8 +194,7 @@ int sfree(void *addr) {
 
             //insert node to be removed to freelist
             (void) insertOrdered(currentNode,freelist);
-            //freelist->size += currentNode->size;
-    
+            //bypass block we want to free.
             if(temp != NULL){
                 currentNode->next = temp->next;
                 if(prev != NULL){       /* addr belongs to the first node */
@@ -221,8 +206,7 @@ int sfree(void *addr) {
                 allocated_list = NULL;
             }
             free(currentNode);
-            /*Set the previous node's next pointer to point
-             to the currentNode's next (ie the block we wish to free) */
+          
             return 0;
             
         }else{
@@ -235,38 +219,19 @@ int sfree(void *addr) {
     return -1; //unsuccessful sfree();s
 }
 
-//end of sfree
 
 /*
  ============================================================================
- Helper Function to insert a node to head of LL;
- returns a pointer to newNode added to the front of list.
+ Helper Function for sfree() 
+ - compares address's of LL nodes
+ - inserts a block in linkedlist by increasing address order.
  ============================================================================
  */
-
-struct block *insert(struct block *current, struct block *dest){
-   struct block *newNode = malloc(sizeof(struct block));
-            if(newNode == NULL) {
-                 perror("Malloc Failed");
-                 exit(1);
-            }
-    
-    newNode->addr = current->addr; //address of the node you are inserting
-    newNode->size = current->size;
-    newNode->next = dest;
-    dest = newNode;
-    return dest;
-
-  
-     
-
-}
-
 struct block *insertOrdered(struct block *list, struct block *dest){
 
    struct block *curr = freelist , *prev = freelist;
-   struct block ** a = &dest;
-   (void) a;
+   // struct block ** a = &dest;
+   // (void) a;
    struct block *newNode = malloc(sizeof(struct block));
             if(newNode == NULL) {
                  perror("Malloc Failed");
@@ -276,20 +241,13 @@ struct block *insertOrdered(struct block *list, struct block *dest){
     newNode->addr = list->addr; //address of the node you are inserting
     newNode->size = list->size;
     assert(curr); //always have one free node
-     /* if(curr == NULL){ */
-     /* 	dest = newNode; */
-     /*    newNode->next = NULL; */
-     /*    return dest; */
-     /* } */
-    //Traverse linkedlist to find point of insertion
-    /* for(curr = dest, prev = dest; (curr->next != NULL && newNode->addr < curr->addr); prev = curr, curr = curr->next){ */
-    /* }    */
-     
+ 
+    /*Traverse linked list to compare memory addresses to find point of insertion */
     while(curr->next != NULL && newNode->addr >  curr->addr){
        prev = curr;
        curr = curr->next;
      }
-     if(curr == prev){ //head
+    if(curr == prev){ /*insert to head */
        newNode->next = curr;
        freelist = newNode;
        return NULL;
@@ -299,7 +257,7 @@ struct block *insertOrdered(struct block *list, struct block *dest){
         newNode->next = curr;
 	curr->next = NULL;
       }
-     else{
+     else{  /*insert between  internal node */
 	prev->next = newNode;
         newNode->next = curr;        
       }
@@ -308,36 +266,4 @@ struct block *insertOrdered(struct block *list, struct block *dest){
 
   
 }
-/*struct  block *searchAddress(struct block *list, void *addr){
-Find block that has enough room to allocate memory 
-    struct block *newNode;
-    for(newNode = list; newNode !=NULL; newNode = newNode->next 
-     && list->addr < newNode->addr) {
-        list = list->next;       
-    }
-    return list;
-}
-*/
-/*
-struct  block *searchSize(struct block *list, int nbytes){
-    
-    
-    //Find block that has enough room to allocate memory
-    while(list != NULL && nbytes > list->size){
-         list = list->next;
-    }
-    return list;
-}
-*/
-/*search for the struct with addr and 
- keep pointer to last visited block */
-//free block at memory address addr
-// keep track of next pointer
-// sort Blocks stored in freelist by increasing address order.
-/* allocatedlist remains unordered, so the node pointing
- to the address freed will not point to the next node*/
-
-
-
-
 
