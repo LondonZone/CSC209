@@ -36,7 +36,8 @@ int main(void) {
     print_mem();
     
     printf("freeing %p result = %d\n", ptrs[1], sfree(ptrs[1]));
-    
+    printf("freeing %p result = %d\n", ptrs[2], sfree(ptrs[2]));
+
     printf("List of allocated blocks:\n");
     print_allocated();
     printf("List of free blocks:\n");

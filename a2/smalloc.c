@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/mman.h>
+#include <assert.h>
 #include "smalloc.h"
 
 
@@ -131,7 +132,7 @@ void mem_clean(){
  */
 void *smalloc(unsigned int nbytes) {
     struct block *current = freelist;
-    struct block *prev, *temp;
+    struct block *prev;
 
     //Find block that has enough room to allocate memory
     prev = NULL;
@@ -206,7 +207,7 @@ int sfree(void *addr) {
             temp = currentNode->next;
 
             //insert node to be removed to freelist
-            freelist = insert(currentNode, freelist);
+            (void) insertOrdered(currentNode,freelist);
             //freelist->size += currentNode->size;
     
             if(temp != NULL){
@@ -261,19 +262,52 @@ struct block *insert(struct block *current, struct block *dest){
 
 }
 
-    /* Determine where newNode belongs in list */
-    /* Locate the node before the point of insertion */
-    /*while(temp->next !=NULL && temp->addr < newNode->addr){
+struct block *insertOrdered(struct block *list, struct block *dest){
+
+   struct block *curr = freelist , *prev = freelist;
+   struct block ** a = &dest;
+   (void) a;
+   struct block *newNode = malloc(sizeof(struct block));
+            if(newNode == NULL) {
+                 perror("Malloc Failed");
+                 exit(1);
+            }
+    
+    newNode->addr = list->addr; //address of the node you are inserting
+    newNode->size = list->size;
+    assert(curr); //always have one free node
+     /* if(curr == NULL){ */
+     /* 	dest = newNode; */
+     /*    newNode->next = NULL; */
+     /*    return dest; */
+     /* } */
+    //Traverse linkedlist to find point of insertion
+    /* for(curr = dest, prev = dest; (curr->next != NULL && newNode->addr < curr->addr); prev = curr, curr = curr->next){ */
+    /* }    */
+     
+    while(curr->next != NULL && newNode->addr >  curr->addr){
+       prev = curr;
+       curr = curr->next;
+     }
+     if(curr == prev){ //head
+       newNode->next = curr;
+       freelist = newNode;
+       return NULL;
+     }
+     if(curr->next == NULL){ /*insert to tail*/
+	prev->next = newNode;
+        newNode->next = curr;
+	curr->next = NULL;
+      }
+     else{
+	prev->next = newNode;
+        newNode->next = curr;        
+      }
        
-        temp = temp->next;       
-  
-    }
-    newNode->next = temp->next;
-    temp->next = newNode;
-*/
+    return NULL;
 
   
-
+}
 /*struct  block *searchAddress(struct block *list, void *addr){
 Find block that has enough room to allocate memory 
     struct block *newNode;

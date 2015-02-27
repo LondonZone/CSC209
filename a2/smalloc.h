@@ -55,4 +55,4 @@ struct  block *searchAddress(struct block *list, void *addr);
 struct  block *searchSize(struct block *list, int nbytes);
 
 
-
+struct block *insertOrdered(struct block *list, struct block *dest);
