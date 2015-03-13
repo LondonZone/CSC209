@@ -102,15 +102,11 @@ int execute_cd(char** words) {
 	 * - If so, return an EXIT_FAILURE status to indicate something is 
 	 *   wrong.
 	 */
-	printf(words[0]);
+	//printf(words[0]);
   	if(words == NULL){
   		return EXIT_FAILURE; //("words is NULL");
   	}
-  	if(words[0])
-  	{
-  		return EXIT_FAILURE; //("second string is NULL");
-  	}
-  	if(words[1])
+  	if(words[1] == NULL)
   	{
   		return EXIT_FAILURE; //("second string is NULL");
   	}
@@ -121,11 +117,7 @@ int execute_cd(char** words) {
 	
 
      //Note chdir works well with both relative and absolute path
-     int check;
-     check = chdir(words[1]);
-     if(check == -1){
-     	perror("chdir()");
-     }
+     int check = chdir(words[1]);
      return check;
 
 	/**
@@ -191,7 +183,8 @@ int execute_command(char **tokens) {
         }
 
         char *tokenCopy[size];
-        strcpy(tokenCopy, ""); //init new string
+        char *s = "";
+        strcpy(tokenCopy, s); //init new string
         while(tokens[i] != "\0"){
             strcat(tokenCopy,tokens[i]); // append a copy of tokens[i] 
         }
