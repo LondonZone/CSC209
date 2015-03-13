@@ -52,7 +52,59 @@ int main(void) {
     }
     strip(password, MAXPASSWD);
 
-    /*Your code here*/
+    int pipeEnd[2];// array of size 2 for password and username
+    pipe(pipeEnd); // init pipes 
+
+    pid_t pid;
+    pid = fork();
+    if (pid == 0){  //child process
+        close(pipeEnd[1]);// close read end 
+        dup2(pipeEnd[0],STDIN_FILENO);
+        close(pipeEnd[0]);
+
+        execlp("./validate",NULL);
+        
+    }else{
+    //send 'validate' the user id and password on a pipe, 
+        // set stdin to stdout of pipes 
+        
+        int status;
+        close(pipeEnd[0]);//close write end
+        write(pipeEnd[1],userid,10);
+        write(pipeEnd[1],password,10); //read in
+        wait(&status);
+        int temp = WEXITSTATUS(status);
+        close(pipeEnd[1]);// close read end 
+
+       printf("%d\n",temp);
+        switch(temp){
+            case 2:
+                printf("Invalid password");
+
+            case 3:
+                printf("No such user");
+
+            case 0:
+                printf("Password verified");
+
+
+
+        }
+
+    }
+
+    
+    
+   
+    
     
     return 0;
 }
+
+
+
+
+
+
+
+
