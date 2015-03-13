@@ -102,6 +102,7 @@ int execute_cd(char** words) {
 	 * - If so, return an EXIT_FAILURE status to indicate something is 
 	 *   wrong.
 	 */
+	 printf(words[0]);
   	if(words == NULL){
   		return EXIT_FAILURE; //("words is NULL");
   	}
@@ -186,7 +187,7 @@ int execute_command(char **tokens) {
         }
 
         char *tokenCopy[size];
-        strcpy(tokens, ""); //init new string
+        strcpy(tokenCopy, ""); //init new string
         while(tokens[i] != "\0"){
             strcat(tokenCopy,tokens[i]); // append a copy of tokens[i] 
         }
