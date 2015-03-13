@@ -186,7 +186,7 @@ int execute_command(char **tokens) {
         }
 
         char *tokenCopy[size];
-        strcpy(token, ""); //init new string
+        strcpy(tokens, ""); //init new string
         while(tokens[i] != "\0"){
             strcat(tokenCopy,tokens[i]); // append a copy of tokens[i] 
         }
@@ -199,6 +199,8 @@ int execute_command(char **tokens) {
     //   	write(pipeEnd[1],tokens,1);
     //   	close(pipeEnd[1]);
     // }
+	}
+
 }
 
 
@@ -240,6 +242,17 @@ int execute_simple_command(simple_command *cmd) {
 	 * - The parent should wait for the child.
 	 *   (see wait man pages).
 	 */
+
+	if(is_builtin(cmd->tokens[0])){
+		return execute_cd(cmd->tokens);//execute command tokens contains params
+        
+	}else{
+		pid_t pid;
+    	pid = fork();
+    	if (pid == 0){  //child process
+        	execute_nonbuiltin(cmd);
+		}
+	}
 	
 }
 
