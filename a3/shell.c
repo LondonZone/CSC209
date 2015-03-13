@@ -113,7 +113,7 @@ int execute_cd(char** words) {
   	{
   		return EXIT_FAILURE; //("second string is NULL");
   	}
-  	if(words[0] != "cd")
+  	if((strcmp(words[0],"cd")  != 0))
   	{
   		return EXIT_FAILURE; //("invalid command");
   	}
