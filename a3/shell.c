@@ -102,8 +102,26 @@ int execute_cd(char** words) {
 	 * - If so, return an EXIT_FAILURE status to indicate something is 
 	 *   wrong.
 	 */
+  	if(words == NULL){
+  		EXIT_FAILURE("words is NULL");
+  	}
+  	if(words[0])
+  	{
+  		EXIT_FAILURE("second string is NULL");
+  	}
+  	if(words[1])
+  	{
+  		EXIT_FAILURE("second string is NULL");
+  	}
+  	if(words[0] != "cd")
+  	{
+  		EXIT_FAILURE("invalid command");
+  	}
+	
 
-
+     //Note chdir works well with both relative and absolute path
+     int check = chdir(word[1]);
+     return check;
 
 	/**
 	 * TODO: 
@@ -117,6 +135,8 @@ int execute_cd(char** words) {
 	 * Hints: see chdir and getcwd man pages.
 	 * Return the success/error code obtained when changing the directory.
 	 */
+     
+
 	 
 }
 
@@ -146,7 +166,7 @@ int execute_command(char **tokens) {
 	 *   would suffice.
 	 * Function returns only in case of a failure (EXIT_FAILURE).
 	 */
-
+	 e
 
 }
 
