@@ -179,8 +179,20 @@ int execute_command(char **tokens) {
     }
     if(pid == 0){  //child process
         //close(pipeEnd[1]);// close read end  
-        execlp(tokens[0],++tokens,NULL);	 
-    }
+        int i = 1;
+        int size = 0;
+        while(tokens[i] != "\0"){
+            	size++;
+        }
+
+        char *tokenCopy[size];
+        strcpy(token, ""); //init new string
+        while(tokens[i] != "\0"){
+            strcat(tokenCopy,tokens[i]); // append a copy of tokens[i] 
+        }
+       
+        execlp(tokens[0],tokenCopy,NULL);	 
+    	perror("exec()");//only reached if exec failed
 
     //else{
     // 	close(pipeEnd[1]);
