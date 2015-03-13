@@ -103,19 +103,19 @@ int execute_cd(char** words) {
 	 *   wrong.
 	 */
   	if(words == NULL){
-  		EXIT_FAILURE("words is NULL");
+  		return EXIT_FAILURE; //("words is NULL");
   	}
   	if(words[0])
   	{
-  		EXIT_FAILURE("second string is NULL");
+  		return EXIT_FAILURE; //("second string is NULL");
   	}
   	if(words[1])
   	{
-  		EXIT_FAILURE("second string is NULL");
+  		return EXIT_FAILURE; //("second string is NULL");
   	}
   	if(words[0] != "cd")
   	{
-  		EXIT_FAILURE("invalid command");
+  		return EXIT_FAILURE; //("invalid command");
   	}
 	
 
