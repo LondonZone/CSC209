@@ -166,8 +166,27 @@ int execute_command(char **tokens) {
 	 *   would suffice.
 	 * Function returns only in case of a failure (EXIT_FAILURE).
 	 */
-	 e
+	 
+	//int pipeEnd[2];// array of size 2 for password and username
+    //pipe(pipeEnd); // init pipes 
 
+	pid_t pid;
+    pid = fork();
+
+    if(pid == -1){
+    	perror(" No such file of directory ");
+
+    }
+    if(pid == 0){  //child process
+        //close(pipeEnd[1]);// close read end  
+        execlp(tokens[0],++tokens,NULL);	 
+    }
+
+    //else{
+    // 	close(pipeEnd[1]);
+    //   	write(pipeEnd[1],tokens,1);
+    //   	close(pipeEnd[1]);
+    // }
 }
 
 
