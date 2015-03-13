@@ -102,7 +102,7 @@ int execute_cd(char** words) {
 	 * - If so, return an EXIT_FAILURE status to indicate something is 
 	 *   wrong.
 	 */
-	 printf(words[0]);
+	printf(words[0]);
   	if(words == NULL){
   		return EXIT_FAILURE; //("words is NULL");
   	}
@@ -121,7 +121,11 @@ int execute_cd(char** words) {
 	
 
      //Note chdir works well with both relative and absolute path
-     int check = chdir(word[1]);
+     int check;
+     check = chdir(words[1]);
+     if(check == -1){
+     	perror("chdir()");
+     }
      return check;
 
 	/**
