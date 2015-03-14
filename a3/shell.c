@@ -236,10 +236,11 @@ int execute_nonbuiltin(simple_command *s) {
     	//execute the command using the tokens
 		execute_command(s->tokens); 
 
-	}else{
-		perror("input file doesnt exist");
-		exit(1);
 	}
+	// else{
+	// 	perror("input file doesnt exist");
+	// 	exit(1);
+	// }
 
 	if(s->out != NULL){
 		//If the output file does not exist it will be created. 
@@ -296,7 +297,7 @@ int execute_simple_command(simple_command *cmd) {
 		}else{ /* make parent process wait for the child */
 			int status;
         	wait(&status);
-        	int temp = WEXITSTATUS(status);
+        	//int temp = WEXITSTATUS(status);
 		}
 	}
 	
