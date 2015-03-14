@@ -22,6 +22,7 @@
 #define MAX_COMMAND 1024
 #define MAX_TOKEN 128
 
+
 /* Functions to implement, see below after main */
 int execute_cd(char** words);
 int execute_nonbuiltin(simple_command *s);
@@ -178,9 +179,9 @@ int execute_command(char **tokens) {
         //close(pipeEnd[1]);// close read end  
         int i = 1;
         int size = 0;
-        while(tokens[i] != "\0"){
+        while(tokens[i] != "\0"){ //determine number of tokens
             	size++;
-        }
+    	}
 
         char *tokenCopy[size];
         char *s = "";
@@ -191,25 +192,26 @@ int execute_command(char **tokens) {
        
         execlp(tokens[0],tokenCopy,NULL);	 
     	perror("exec()");//only reached if exec failed
-
+    }
     //else{
     // 	close(pipeEnd[1]);
     //   	write(pipeEnd[1],tokens,1);
     //   	close(pipeEnd[1]);
     // }
-	}
+	
 
 }
 
 
 /**
- * Executes a non-builtin command.
+ * Executes a non-builtin command. 
+ * NOTE: Simple command with Redirection
  */
 int execute_nonbuiltin(simple_command *s) {
 	/**
 	 * TODO: Check if the in, out, and err fields are set (not NULL),
 	 * and, IN EACH CASE:
-	 * - Open a new file descriptor (make sure you have the correct flags,
+	 * - Open a new file descriptor (make sure you have the correct flags, 
 	 *   and permissions);
 	 * - redirect stdin/stdout/stderr to the corresponding file.
 	 *   (hint: see dup2 man pages).
@@ -219,7 +221,47 @@ int execute_nonbuiltin(simple_command *s) {
 	 *   function above).
 	 * This function returns only if the execution of the program fails.
 	 */
+
+	/* 1) Check if the in, out, and err fields are set (not NULL)
+	*  2) Open a new file descriptor
+	*  3) use dup2() to redirect them
+	*/
+
+	if((s->in != NULL){
+		//close(WRITE_END);//close stdin  
+		int fd =  open(s->in, O_RDONLY, 1);
+    	dup2(fd,STDIN_FILENO); //redirect stdin
+    	close(fd); // close Read end
+
+    	//execute the command using the tokens
+		execute_command(s->tokens); 
+
+	}else{
+		perror("input file doesnt exist");
+		exit(1)
+	}
+
+	if(s->out != NULL){
+		//If the output file does not exist it will be created. 
+		int fd = open(s->out, O_WRONLY | O_CREAT , 0);
+    	dup2(fd,STDOUT_FILENO); //redirect stdout
+    	close(fd); // close Read end
+
+    	//execute the command using the tokens
+		execute_command(s->tokens); 
+
 	
+	if(s->err != NULL){
+		//If the stderr file does not exist it will be created. 
+		int fd = open(s->err, O_WRONLY | O_CREAT  , 2);
+		dup2(fd,STDERR_FILENO); //redirect stdout
+    	close(fd); 
+
+    	//execute the command using the tokens
+		execute_command(s->tokens); 
+	}
+   
+
 
 }
 
@@ -249,6 +291,12 @@ int execute_simple_command(simple_command *cmd) {
     	pid = fork();
     	if (pid == 0){  //child process
         	execute_nonbuiltin(cmd);
+
+
+		}else{ /* make parent process wait for the child */
+			int status;
+        	wait(&status);
+        	int temp = WEXITSTATUS(status);
 		}
 	}
 	
