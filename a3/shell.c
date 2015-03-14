@@ -238,7 +238,7 @@ int execute_nonbuiltin(simple_command *s) {
 
 	}else{
 		perror("input file doesnt exist");
-		exit(1)
+		exit(1);
 	}
 
 	if(s->out != NULL){
