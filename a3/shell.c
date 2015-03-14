@@ -227,7 +227,7 @@ int execute_nonbuiltin(simple_command *s) {
 	*  3) use dup2() to redirect them
 	*/
 
-	if((s->in != NULL){
+	if(s->in != NULL){
 		//close(WRITE_END);//close stdin  
 		int fd =  open(s->in, O_RDONLY, 1);
     	dup2(fd,STDIN_FILENO); //redirect stdin
@@ -250,7 +250,7 @@ int execute_nonbuiltin(simple_command *s) {
     	//execute the command using the tokens
 		execute_command(s->tokens); 
 
-	
+	}
 	if(s->err != NULL){
 		//If the stderr file does not exist it will be created. 
 		int fd = open(s->err, O_WRONLY | O_CREAT  , 2);
