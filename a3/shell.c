@@ -231,12 +231,12 @@ int execute_nonbuiltin(simple_command *s) {
 	*  2) Open a new file descriptor
 	*  3) use dup2() to redirect them
 	*/
-
+	int fd;
 	if(s->in != NULL){
-		int fd =  open(s->in, O_RDONLY, 1);
+		 fd =  open(s->in, O_RDONLY, 1);
 		
 		//redirect stdin
-    	if((dup2(fd,STDIN_FILENO) == -1){
+    	if((dup2(fd,STDIN_FILENO)) == -1){
         	perror("dup2");
         	exit(1); 
         }
@@ -252,10 +252,10 @@ int execute_nonbuiltin(simple_command *s) {
 	
 	if(s->out != NULL){
 		//If the output file does not exist it will be created. 
-		int fd = open(s->out, O_WRONLY | O_CREAT , 0);
+		 fd = open(s->out, O_WRONLY | O_CREAT , 0);
 
 		//redirect stdout
-    	if((dup2(fd,STDOUT_FILENO) == -1){
+    	if((dup2(fd,STDOUT_FILENO)) == -1){
     		perror("dup2");
         	exit(1); //redirect stdin
     	} 
@@ -269,10 +269,10 @@ int execute_nonbuiltin(simple_command *s) {
 	}
 	if(s->err != NULL){
 		//If the stderr file does not exist it will be created. 
-		int fd = open(s->err, O_WRONLY | O_CREAT  , 2);
+		 fd = open(s->err, O_WRONLY | O_CREAT  , 2);
 
 		//redirect stderr
-		if((dup2(fd,STDERR_FILENO) == -1){
+		if((dup2(fd,STDERR_FILENO)) == -1){
 			perror("dup2");
         	exit(1); //redirect stdin
 		} 
@@ -326,7 +326,7 @@ int execute_simple_command(simple_command *cmd) {
 		{ /* make parent process wait for the child */
 			int status;
         	wait(&status);
-        	if(WIFEXITED(status){
+        	if(WIFEXITED(status)){
         		int temp = WEXITSTATUS(status);
         		if(temp == -1) {
 					perror("wait");
