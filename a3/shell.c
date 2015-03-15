@@ -211,6 +211,7 @@ int execute_nonbuiltin(simple_command *s) {
     	if((close(fd)) == -1) 
     	{
         	perror("close");
+        	exit(1);
         }	 
 
     	//execute the command using the tokens
@@ -233,6 +234,7 @@ int execute_nonbuiltin(simple_command *s) {
     	if((close(fd)) == -1) 
     	{
         	perror("close");
+        	exit(1);
     	}
     	//execute the command using the tokens
 		//execute_command(s->tokens); 
@@ -252,6 +254,7 @@ int execute_nonbuiltin(simple_command *s) {
     	if((close(fd)) == -1) 
     	{
         	perror("close");
+        	exit(1);
     	}
     	//execute the command using the tokens
 		//execute_command(s->tokens); 
@@ -309,6 +312,8 @@ int execute_simple_command(simple_command *cmd) {
         	
 		}
 	}
+
+	return 0;
 }
 
 
@@ -317,7 +322,9 @@ int execute_simple_command(simple_command *cmd) {
  * together with a pipe operator.
  */
 int execute_complex_command(command *c) {
-	
+
+//#define WRITE_END pfd[1];
+//#define READ_END pfd[0];	
 	/**
 	 * TODO:
 	 * Check if this is a simple command, using the scmd field.
@@ -326,6 +333,12 @@ int execute_complex_command(command *c) {
 	 * Execute nonbuiltin commands only. If it's exit or cd, you should not 
 	 * execute these in a piped context, so simply ignore builtin commands. 
 	 */
+
+	 //Execute nonbuiltin commands only.
+	 if(c->scmd != NULL){
+	 	execute_simple_command(c->scmd);
+
+	 }
 	
 
 
@@ -344,7 +357,11 @@ int execute_complex_command(command *c) {
 		 * creating the pipe.
 		 */
 
-			
+		 int pfd[2]; //file descriptors
+		 pipe(pfd); // initialize pipe
+
+		
+
 		/**
 		 * TODO: Fork a new process.
 		 * In the child:
@@ -366,7 +383,50 @@ int execute_complex_command(command *c) {
 		 *     - close both ends of the pipe. 
 		 *     - wait for both children to finish.
 		 */
-		
-	}
+
+
+		pid_t pid;
+    	pid = fork();
+
+    	if (pid == 0){  //child process
+        	close(pipeEnd[0]);// close stdout fd
+        	dup2(pipeEnd[1],STDOUT_FILENO);
+        	close(pipeEnd[1]); //close stdin fd
+
+        	execute_command(c->cmd1)
+        	
+        }else
+        { // set stdin to stdout of pipes 
+        	int status1, status2;
+        	pid_t pid2;
+    		pid2 = fork();
+    			// second child process only
+    			if(pid2 == 0) 
+    			{
+
+	        		close(pipeEnd[1]);//close stdin fd
+	        		dup2(pipeEnd[0],STDIN_FILENO);
+	        		close(pipeEnd[0]);// close stdout fd
+
+	    		}
+	    	//parent process only
+	 		wait(&status1);
+	 		wait(&status2);
+	    	if(WIFEXITED(status1) || WIFEXITED(status2))
+	    	{
+        		int temp1 = WEXITSTATUS(status1);
+        		int temp2 = WEXITSTATUS(status2);
+        		if((temp1 || temp2) == -1))
+        		{
+					perror("wait");
+					exit(1);
+					
+        		}
+        	}
+	    	//close both ends of the pipe
+	    	close(pipeEnd[1]);
+	        close(pipeEnd[0]);
+
+		}//end of parent process
 	return 0;
 }
