@@ -164,6 +164,8 @@ int execute_command(char **tokens) {
 	 *   would suffice.
 	 * Function returns only in case of a failure (EXIT_FAILURE).
 	 */
+
+	 return  execvp(tokens[0],tokens);	
 	 
 	//int pipeEnd[2];// array of size 2 for password and username
     //pipe(pipeEnd); // init pipes 
@@ -200,7 +202,7 @@ int execute_command(char **tokens) {
     // }
 	
 
-	return  execvp(tokens[0],tokens);	 
+	 
 
  //    	perror("exec()");//only reached if exec fa
 }
@@ -319,7 +321,9 @@ int execute_simple_command(simple_command *cmd) {
         	execute_nonbuiltin(cmd);
 
 
-		}else{ /* make parent process wait for the child */
+		}
+		else
+		{ /* make parent process wait for the child */
 			int status;
         	wait(&status);
         	if(WIFEXITED(status){
@@ -331,7 +335,6 @@ int execute_simple_command(simple_command *cmd) {
         	}
         	
 		}
-	}
 	
 }
 
