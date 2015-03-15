@@ -165,43 +165,9 @@ int execute_command(char **tokens) {
 	 * Function returns only in case of a failure (EXIT_FAILURE).
 	 */
 
+
 	 return  execvp(tokens[0],tokens);	
 	 
-	//int pipeEnd[2];// array of size 2 for password and username
-    //pipe(pipeEnd); // init pipes 
-
-	// pid_t pid;
- //    pid = fork();
-
- //    if(pid == -1){
- //    	perror(" No such file of directory ");
-
- //    }
- //    if(pid == 0){  //child process
- //        //close(pipeEnd[1]);// close read end  
- //        int i = 1;
- //        int size = 0;
- //        while(tokens[i] != "\0"){ //determine number of tokens
- //            	size++;
- //    	}
-
- //        char *tokenCopy[size];
- //        char *s = "";
- //        strcpy(tokenCopy, s); //init new string
- //        while(tokens[i] != "\0"){
- //            strcat(tokenCopy,tokens[i]); // append a copy of tokens[i] 
- //        }
-       
- //        execlp(tokens[0],tokenCopy,NULL);	 
- //    	perror("exec()");//only reached if exec failed
- //    }
-    //else{
-    // 	close(pipeEnd[1]);
-    //   	write(pipeEnd[1],tokens,1);
-    //   	close(pipeEnd[1]);
-    // }
-	
-
 	 
 
  //    	perror("exec()");//only reached if exec fa
@@ -233,7 +199,7 @@ int execute_nonbuiltin(simple_command *s) {
 	*/
 	int fd;
 	if(s->in != NULL){
-		 fd =  open(s->in, O_RDONLY, 1);
+		 fd =  open(s->in, O_RDONLY);
 		
 		//redirect stdin
     	if((dup2(fd,STDIN_FILENO)) == -1)
@@ -255,7 +221,7 @@ int execute_nonbuiltin(simple_command *s) {
 	if(s->out != NULL)
 	{
 		//If the output file does not exist it will be created. 
-		 fd = open(s->out, O_WRONLY | O_CREAT , 0);
+		 fd = open(s->out, O_WRONLY | O_CREAT | O_TRUNC , 0600);
 
 		//redirect stdout
     	if((dup2(fd,STDOUT_FILENO)) == -1)
@@ -275,7 +241,7 @@ int execute_nonbuiltin(simple_command *s) {
 	if(s->err != NULL)
 	{
 		//If the stderr file does not exist it will be created. 
-		 fd = open(s->err, O_WRONLY | O_CREAT  , 2);
+		 fd = open(s->err, O_WRONLY | O_CREAT | O_TRUNC , 0600);
 
 		//redirect stderr
 		if((dup2(fd,STDERR_FILENO)) == -1)
