@@ -317,7 +317,8 @@ int execute_simple_command(simple_command *cmd) {
 	else{
 		pid_t pid;
     	pid = fork();
-    	if (pid == 0){  //child process
+    	if (pid == 0)
+    	{  //child process
         	execute_nonbuiltin(cmd);
 
 
@@ -335,7 +336,7 @@ int execute_simple_command(simple_command *cmd) {
         	}
         	
 		}
-	
+	}
 }
 
 
