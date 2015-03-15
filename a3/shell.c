@@ -236,56 +236,62 @@ int execute_nonbuiltin(simple_command *s) {
 		 fd =  open(s->in, O_RDONLY, 1);
 		
 		//redirect stdin
-    	if((dup2(fd,STDIN_FILENO)) == -1){
+    	if((dup2(fd,STDIN_FILENO)) == -1)
+    	{
         	perror("dup2");
         	exit(1); 
         }
         // close Read end
-    	if((close(fd)) == -1) {
+    	if((close(fd)) == -1) 
+    	{
         	perror("close");
         }	 
 
     	//execute the command using the tokens
-		execute_command(s->tokens); 
+		//execute_command(s->tokens); 
 
 	}
 	
-	if(s->out != NULL){
+	if(s->out != NULL)
+	{
 		//If the output file does not exist it will be created. 
 		 fd = open(s->out, O_WRONLY | O_CREAT , 0);
 
 		//redirect stdout
-    	if((dup2(fd,STDOUT_FILENO)) == -1){
+    	if((dup2(fd,STDOUT_FILENO)) == -1)
+    	{
     		perror("dup2");
         	exit(1); //redirect stdin
     	} 
     	// close Read end
-    	if((close(fd)) == -1) {
+    	if((close(fd)) == -1) 
+    	{
         	perror("close");
     	}
     	//execute the command using the tokens
-		execute_command(s->tokens); 
+		//execute_command(s->tokens); 
 
 	}
-	if(s->err != NULL){
+	if(s->err != NULL)
+	{
 		//If the stderr file does not exist it will be created. 
 		 fd = open(s->err, O_WRONLY | O_CREAT  , 2);
 
 		//redirect stderr
-		if((dup2(fd,STDERR_FILENO)) == -1){
+		if((dup2(fd,STDERR_FILENO)) == -1)
+		{
 			perror("dup2");
         	exit(1); //redirect stdin
 		} 
-    	if((close(fd)) == -1) {
+    	if((close(fd)) == -1) 
+    	{
         	perror("close");
     	}
     	//execute the command using the tokens
-		execute_command(s->tokens); 
-	}
-
-    
-
-
+		//execute_command(s->tokens); 
+	}    
+	//execute the command using the tokens
+	execute_command(s->tokens); 
 }
 
 
