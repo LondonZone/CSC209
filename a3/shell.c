@@ -236,7 +236,7 @@ int execute_nonbuiltin(simple_command *s) {
 		int fd =  open(s->in, O_RDONLY, 1);
 		
 		//redirect stdin
-    	if((dup2(fd,STDIN_FILENO);== -1){
+    	if((dup2(fd,STDIN_FILENO) == -1){
         	perror("dup2");
         	exit(1); 
         }
