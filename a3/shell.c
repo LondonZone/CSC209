@@ -301,7 +301,7 @@ int execute_simple_command(simple_command *cmd) {
     	if (pid == 0)
     	{  //child process
         	execute_nonbuiltin(cmd);
-
+        	exit(0);
 
 		}
 		else
