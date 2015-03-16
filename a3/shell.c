@@ -293,6 +293,11 @@ int execute_simple_command(simple_command *cmd) {
 	else{
 		pid_t pid;
     	pid = fork();
+    	if (pid == -1) 
+    	{
+			perror("fork");
+			exit(1);
+		}
     	if (pid == 0)
     	{  //child process
         	execute_nonbuiltin(cmd);
@@ -388,7 +393,11 @@ int execute_complex_command(command *c) {
 
 		pid_t pid;
     	pid = fork();
-
+    	if (pid == -1) 
+    	{
+			perror("fork");
+			exit(1);
+		}
     	if (pid == 0){  //child process
         	close(pfd[0]);// close stdout fd
         	dup2(pfd[1],STDOUT_FILENO);
@@ -401,6 +410,12 @@ int execute_complex_command(command *c) {
         	int status1, status2;
         	pid_t pid2;
     		pid2 = fork();
+    		
+    		if (pid2 == -1) 
+    		{
+				perror("fork");
+				exit(1);
+			}
     			// second child process only
     			if(pid2 == 0) 
     			{
