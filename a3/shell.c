@@ -447,10 +447,13 @@ int execute_complex_command(command *c) {
 	        		printf("child 2 reached");
 	        		exit(0);
 	    	}
+	    	//close both ends of the pipe inside parent process
+	    	close(pfd[1]);
+	        close(pfd[0]);
 	    	//parent process only
 	 		wait(&status1);
 	 		wait(&status2);
-	    	if(WIFEXITED(status1) || WIFEXITED(status2))
+	    	if(WIFEXITED(status1) != 0 || WIFEXITED(status2) != 0)
 	    	{
         		int temp1 = WEXITSTATUS(status1);
         		int temp2 = WEXITSTATUS(status2);
@@ -461,9 +464,7 @@ int execute_complex_command(command *c) {
 					
         		}
         	}
-	    	//close both ends of the pipe inside parent process
-	    	close(pfd[1]);
-	        close(pfd[0]);
+	    	
 
 		}//end of parent process
 
