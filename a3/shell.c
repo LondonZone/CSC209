@@ -261,6 +261,7 @@ int execute_nonbuiltin(simple_command *s) {
 	}    
 	//execute the command using the tokens
 	execute_command(s->tokens); 
+	return 0;
 }
 
 
