@@ -401,12 +401,12 @@ int execute_complex_command(command *c) {
     	if (pid == 0)
     	{  //child process
         	close(pfd[0]);// close stdout fd
-        	//dup2(pfd[1],STDOUT_FILENO);
-        	if((dup2(pfd[1],STDOUT_FILENO)) == -1)
-			{
-				perror("dup2");
-        		exit(1); //redirect stdin
-			} 
+        	dup2(pfd[1],STDOUT_FILENO);
+   //      	if((dup2(pfd[1],STDOUT_FILENO)) == -1)
+			// {
+			// 	perror("dup2");
+   //      		exit(1); //redirect stdin
+			// } 
         	close(pfd[1]); //close stdin fd
 
         	//execute_command(c->cmd1);
@@ -430,12 +430,12 @@ int execute_complex_command(command *c) {
     			{
 
 	        		close(pfd[1]);//close stdin fd
-	        		//dup2(pfd[0],STDIN_FILENO);
-	        		if((dup2(pfd[0],STDIN_FILENO)) == -1)
-					{
-						perror("dup2");
-        				exit(1); //redirect stdin
-					} 
+	        		dup2(pfd[0],STDIN_FILENO);
+	        		//if((dup2(pfd[0],STDIN_FILENO)) == -1)
+					//{
+					//	perror("dup2");
+        			//	exit(1); //redirect stdin
+					//} 
 	        		close(pfd[0]);// close stdout fd
 
 	        		execute_simple_command(c->scmd);
