@@ -410,7 +410,7 @@ int execute_complex_command(command *c) {
         	close(pfd[1]); //close stdin fd
 
         	//execute_command(c->cmd1);
-        	execute_simple_command(c->cmd1);
+        	execute_simple_command(c->scmd);
         	// execvp(tokens[0],tokens);
         	//execvp(c->cmd1)
         	
@@ -438,7 +438,7 @@ int execute_complex_command(command *c) {
 					//} 
 	        		close(pfd[0]);// close stdout fd
 
-	        		execute_simple_command(c->cmd2);
+	        		execute_simple_command(c->scmd);
 
 	    		}
 	    	//parent process only
