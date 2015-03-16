@@ -166,10 +166,10 @@ int execute_command(char **tokens) {
 	 */
 
 
-	 return  execvp(tokens[0],tokens);	
-	 
-	 
-
+	 return  execvp(tokens[0],tokens);
+	 //perror("exec()");//only reached if exec fails
+	
+	
  //    	perror("exec()");//only reached if exec fa
 }
 
@@ -404,7 +404,10 @@ int execute_complex_command(command *c) {
         	dup2(pfd[1],STDOUT_FILENO);
         	close(pfd[1]); //close stdin fd
 
-        	execute_command(c->cmd1);
+        	//execute_command(c->cmd1);
+        	execute_simple_command(c->cmd1);
+        	// execvp(tokens[0],tokens);
+        	//execvp(c->cmd1)
         	
         }else
         { // set stdin to stdout of pipes 
@@ -424,6 +427,8 @@ int execute_complex_command(command *c) {
 	        		close(pfd[1]);//close stdin fd
 	        		dup2(pfd[0],STDIN_FILENO);
 	        		close(pfd[0]);// close stdout fd
+
+	        		execute_simple_command(c->cmd2);
 
 	    		}
 	    	//parent process only
