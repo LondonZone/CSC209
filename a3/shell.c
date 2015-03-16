@@ -103,7 +103,7 @@ int execute_cd(char** words) {
 	 * - If so, return an EXIT_FAILURE status to indicate something is 
 	 *   wrong.
 	 */
-	//printf(words[0]);
+	
   	if(words == NULL){
   		return EXIT_FAILURE; //("words is NULL");
   	}
@@ -115,10 +115,17 @@ int execute_cd(char** words) {
   	{
   		return EXIT_FAILURE; //("invalid command");
   	}
+  	if(strlen(words[1]) > MAX_DIRNAME){
+  		return EXIT_FAILURE;
+  	}
 	
 
      //Note chdir works well with both relative and absolute path
      int check = chdir(words[1]);
+     if(check == -1){
+     	perror("chdir");
+     	exit(1);
+     }
      return check;
 
 	/**
@@ -167,10 +174,7 @@ int execute_command(char **tokens) {
 
 
 	 return  execvp(tokens[0],tokens);
-	 //perror("exec()");//only reached if exec fails
-	
-	
- //    	perror("exec()");//only reached if exec fa
+	 //The return value  of exevp is -1 upon error
 }
 
 
@@ -199,8 +203,13 @@ int execute_nonbuiltin(simple_command *s) {
 	*/
 	int fd;
 	if(s->in != NULL){
-		 fd =  open(s->in, O_RDONLY);
-		
+		fd =  open(s->in, O_RDONLY);
+
+		// return -1 if an error occurred 
+		if(fd == -1){
+			perror("open()");
+			exit(1);
+		}
 		//redirect stdin
     	if((dup2(fd,STDIN_FILENO)) == -1)
     	{
@@ -214,15 +223,20 @@ int execute_nonbuiltin(simple_command *s) {
         	exit(1);
         }	 
 
-    	//execute the command using the tokens
-		//execute_command(s->tokens); 
+    
 
 	}
 	
 	if(s->out != NULL)
 	{
-		//If the output file does not exist it will be created. 
-		 fd = open(s->out, O_WRONLY | O_CREAT | O_TRUNC , 0600);
+		//If the output file does not exist it will be created.
+		fd = open(s->out, O_WRONLY | O_CREAT | O_TRUNC , 0600);
+
+		// return -1 if an error occurred 
+		if(fd == -1){
+			perror("open()");
+			exit(1);
+		}
 
 		//redirect stdout
     	if((dup2(fd,STDOUT_FILENO)) == -1)
@@ -236,8 +250,7 @@ int execute_nonbuiltin(simple_command *s) {
         	perror("close");
         	exit(1);
     	}
-    	//execute the command using the tokens
-		//execute_command(s->tokens); 
+    	
 
 	}
 	if(s->err != NULL)
@@ -245,6 +258,11 @@ int execute_nonbuiltin(simple_command *s) {
 		//If the stderr file does not exist it will be created. 
 		 fd = open(s->err, O_WRONLY | O_CREAT | O_TRUNC , 0600);
 
+		 // return -1 if an error occurred 
+		 if(fd == -1){
+			perror("open()");
+			exit(1);
+		}
 		//redirect stderr
 		if((dup2(fd,STDERR_FILENO)) == -1)
 		{
@@ -256,8 +274,7 @@ int execute_nonbuiltin(simple_command *s) {
         	perror("close");
         	exit(1);
     	}
-    	//execute the command using the tokens
-		//execute_command(s->tokens); 
+    	
 	}    
 	//execute the command using the tokens
 	execute_command(s->tokens); 
@@ -283,14 +300,15 @@ int execute_simple_command(simple_command *cmd) {
 	 */
 
 	if(cmd->builtin == BUILTIN_CD){
-		return execute_cd(cmd->tokens);//execute command tokens contains params
+		//execute command tokens contains params
+		return execute_cd(cmd->tokens);
         
 	}
 	if(cmd->builtin == BUILTIN_EXIT){
 		exit(EXIT_FAILURE);
 
 	}
-	else{ //if not builtin command
+	else{ /*if not builtin command */
 		pid_t pid;
     	pid = fork();
     	if (pid == -1) 
@@ -308,9 +326,11 @@ int execute_simple_command(simple_command *cmd) {
 		{ /* make parent process wait for the child */
 			int status;
         	wait(&status);
-        	if(WIFEXITED(status)){
+        	if(WIFEXITED(status))
+        	{
         		int temp = WEXITSTATUS(status);
-        		if(temp == -1) {
+        		if(temp == -1) 
+        		{
 					perror("wait");
 					exit(1);
 				}
@@ -343,12 +363,9 @@ int execute_complex_command(command *c) {
 	 //Execute nonbuiltin commands only. (base case)
 	 if(c->scmd != NULL){
 	 	return execute_simple_command(c->scmd);
-	 	//exit(0);
 
 	 }
 	
-
-
 	/** 
 	 * Optional: if you wish to handle more than just the 
 	 * pipe operator '|' (the '&&', ';' etc. operators), then 
@@ -400,23 +417,21 @@ int execute_complex_command(command *c) {
 			exit(1);
 		}
     	else if (pid == 0)
-    	{  //child process
+    	{   //child process
+
         	close(pfd[0]);// close stdout fd
         	close(fileno(stdout));
    			if((dup2(pfd[1],STDOUT_FILENO)) == -1)
 			{
 			 	perror("dup2");
-   				 exit(1); //redirect stdin
+   				exit(1); //redirect stdin
 			 } 
         	 close(pfd[1]); //close stdin fd
 
-        	//execute_command(c->cmd1);
-        	printf("child 1 reached");
+        	//printf("child 1 reached\n");
         	execute_complex_command(c->cmd1);
         	exit(0);
-        	//execute_simple_command(c->scmd);
-        	// execvp(tokens[0],tokens);
-        	//execvp(c->cmd1)
+  
         	
         }else
         { // set stdin to stdout of pipes 
@@ -442,15 +457,16 @@ int execute_complex_command(command *c) {
 					} 
 	        		close(pfd[0]);// close stdout fd
 
-	        		//execute_simple_command(c->scmd);
 	        		execute_complex_command(c->cmd2);
-	        		printf("child 2 reached");
+	        		//printf("child 2 reached\n");
 	        		exit(0);
 	    	}
-	    	//close both ends of the pipe inside parent process
+
+	    	/*close both ends of the pipe inside parent process */
 	    	close(pfd[1]);
 	        close(pfd[0]);
-	    	//parent process only
+
+	    	/* parent process only */
 	 		wait(&status1);
 	 		wait(&status2);
 	    	if(WIFEXITED(status1) != 0 || WIFEXITED(status2) != 0)
@@ -466,7 +482,7 @@ int execute_complex_command(command *c) {
         	}
 	    	
 
-		}//end of parent process
+		}/*end of parent process */
 
 	}
 	return 0;
