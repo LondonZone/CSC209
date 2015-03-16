@@ -389,9 +389,9 @@ int execute_complex_command(command *c) {
     	pid = fork();
 
     	if (pid == 0){  //child process
-        	close(pipeEnd[0]);// close stdout fd
-        	dup2(pipeEnd[1],STDOUT_FILENO);
-        	close(pipeEnd[1]); //close stdin fd
+        	close(pfd[0]);// close stdout fd
+        	dup2(pfd[1],STDOUT_FILENO);
+        	close(pfd[1]); //close stdin fd
 
         	execute_command(c->cmd1);
         	
@@ -404,9 +404,9 @@ int execute_complex_command(command *c) {
     			if(pid2 == 0) 
     			{
 
-	        		close(pipeEnd[1]);//close stdin fd
-	        		dup2(pipeEnd[0],STDIN_FILENO);
-	        		close(pipeEnd[0]);// close stdout fd
+	        		close(pfd[1]);//close stdin fd
+	        		dup2(pfd[0],STDIN_FILENO);
+	        		close(pfd[0]);// close stdout fd
 
 	    		}
 	    	//parent process only
@@ -424,8 +424,8 @@ int execute_complex_command(command *c) {
         		}
         	}
 	    	//close both ends of the pipe
-	    	close(pipeEnd[1]);
-	        close(pipeEnd[0]);
+	    	close(pfd[1]);
+	        close(pfd[0]);
 
 		}//end of parent process
 	return 0;
