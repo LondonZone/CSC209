@@ -290,7 +290,7 @@ int execute_simple_command(simple_command *cmd) {
 		exit(EXIT_FAILURE);
 
 	}
-	else{
+	else{ //if not builtin command
 		pid_t pid;
     	pid = fork();
     	if (pid == -1) 
@@ -398,7 +398,8 @@ int execute_complex_command(command *c) {
 			perror("fork");
 			exit(1);
 		}
-    	if (pid == 0){  //child process
+    	if (pid == 0)
+    	{  //child process
         	close(pfd[0]);// close stdout fd
         	dup2(pfd[1],STDOUT_FILENO);
         	close(pfd[1]); //close stdin fd
@@ -410,7 +411,7 @@ int execute_complex_command(command *c) {
         	int status1, status2;
         	pid_t pid2;
     		pid2 = fork();
-    		
+
     		if (pid2 == -1) 
     		{
 				perror("fork");
@@ -444,5 +445,7 @@ int execute_complex_command(command *c) {
 	        close(pfd[0]);
 
 		}//end of parent process
+
+	}
 	return 0;
 }
