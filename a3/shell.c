@@ -399,7 +399,7 @@ int execute_complex_command(command *c) {
 			perror("fork");
 			exit(1);
 		}
-    	if (pid == 0)
+    	else if (pid == 0)
     	{  //child process
         	close(pfd[0]);// close stdout fd
         	close(fileno(stdout));
@@ -429,9 +429,9 @@ int execute_complex_command(command *c) {
 				perror("fork");
 				exit(1);
 			}
-    			// second child process only
-    			if(pid2 == 0) 
-    			{
+    		// second child process only
+    		else if(pid2 == 0) 
+    		{
 
 	        		close(pfd[1]);//close stdin fd
 	        		close(fileno(stdin));
@@ -446,7 +446,7 @@ int execute_complex_command(command *c) {
 	        		execute_complex_command(c->cmd2);
 	        		printf("child 2 reached");
 	        		exit(0);
-	    		}
+	    	}
 	    	//parent process only
 	 		wait(&status1);
 	 		wait(&status2);
