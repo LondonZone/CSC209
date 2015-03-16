@@ -410,6 +410,7 @@ int execute_complex_command(command *c) {
 
         	//execute_command(c->cmd1);
         	execute_complex_command(c->cmd1);
+        	printf("child 1 reached");
         	exit(0);
         	//execute_simple_command(c->scmd);
         	// execvp(tokens[0],tokens);
@@ -440,6 +441,7 @@ int execute_complex_command(command *c) {
 
 	        		//execute_simple_command(c->scmd);
 	        		execute_complex_command(c->cmd2);
+	        		printf("child 2 reached");
 	        		exit(0);
 	    		}
 	    	//parent process only
