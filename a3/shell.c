@@ -343,6 +343,7 @@ int execute_complex_command(command *c) {
 	 //Execute nonbuiltin commands only.
 	 if(c->scmd != NULL){
 	 	execute_simple_command(c->scmd);
+	 	exit(0);
 
 	 }
 	
@@ -409,8 +410,9 @@ int execute_complex_command(command *c) {
         	 close(pfd[1]); //close stdin fd
 
         	//execute_command(c->cmd1);
-        	execute_complex_command(c->cmd1);
         	printf("child 1 reached");
+        	execute_complex_command(c->cmd1);
+        	
         	exit(0);
         	//execute_simple_command(c->scmd);
         	// execvp(tokens[0],tokens);
