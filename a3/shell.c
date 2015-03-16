@@ -340,10 +340,10 @@ int execute_complex_command(command *c) {
 	 * execute these in a piped context, so simply ignore builtin commands. 
 	 */
 
-	 //Execute nonbuiltin commands only.
+	 //Execute nonbuiltin commands only. (base case)
 	 if(c->scmd != NULL){
-	 	execute_simple_command(c->scmd);
-	 	exit(0);
+	 	return execute_simple_command(c->scmd);
+	 	//exit(0);
 
 	 }
 	
@@ -412,7 +412,6 @@ int execute_complex_command(command *c) {
         	//execute_command(c->cmd1);
         	printf("child 1 reached");
         	execute_complex_command(c->cmd1);
-        	
         	exit(0);
         	//execute_simple_command(c->scmd);
         	// execvp(tokens[0],tokens);
