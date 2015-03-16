@@ -416,7 +416,7 @@ int execute_complex_command(command *c) {
 	    	{
         		int temp1 = WEXITSTATUS(status1);
         		int temp2 = WEXITSTATUS(status2);
-        		if((temp1 || temp2) == -1))
+        		if((temp1 || temp2) == -1)
         		{
 					perror("wait");
 					exit(1);
