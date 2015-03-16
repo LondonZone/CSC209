@@ -393,7 +393,7 @@ int execute_complex_command(command *c) {
         	dup2(pipeEnd[1],STDOUT_FILENO);
         	close(pipeEnd[1]); //close stdin fd
 
-        	execute_command(c->cmd1)
+        	execute_command(c->cmd1);
         	
         }else
         { // set stdin to stdout of pipes 
