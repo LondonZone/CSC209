@@ -402,7 +402,7 @@ int execute_complex_command(command *c) {
     	{  //child process
         	close(pfd[0]);// close stdout fd
         	//dup2(pfd[1],STDOUT_FILENO);
-        	if((dup2(pdf[1],STDOUT_FILENO)) == -1)
+        	if((dup2(pfd[1],STDOUT_FILENO)) == -1)
 			{
 				perror("dup2");
         		exit(1); //redirect stdin
@@ -431,7 +431,7 @@ int execute_complex_command(command *c) {
 
 	        		close(pfd[1]);//close stdin fd
 	        		//dup2(pfd[0],STDIN_FILENO);
-	        		if((dup2(pdf[0],STDIN_FILENO)) == -1)
+	        		if((dup2(pfd[0],STDIN_FILENO)) == -1)
 					{
 						perror("dup2");
         				exit(1); //redirect stdin
