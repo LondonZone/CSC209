@@ -402,15 +402,15 @@ int execute_complex_command(command *c) {
     	{  //child process
         	close(pfd[0]);// close stdout fd
         	dup2(pfd[1],STDOUT_FILENO);
-   //      	if((dup2(pfd[1],STDOUT_FILENO)) == -1)
+   			//if((dup2(pfd[1],STDOUT_FILENO)) == -1)
 			// {
 			// 	perror("dup2");
-   //      		exit(1); //redirect stdin
+   			// exit(1); //redirect stdin
 			// } 
         	close(pfd[1]); //close stdin fd
 
         	//execute_command(c->cmd1);
-        	execute_simple_command(c->scmd);
+        	execute_simple_command(c->cmd1);
         	// execvp(tokens[0],tokens);
         	//execvp(c->cmd1)
         	
@@ -438,7 +438,7 @@ int execute_complex_command(command *c) {
 					//} 
 	        		close(pfd[0]);// close stdout fd
 
-	        		execute_simple_command(c->scmd);
+	        		execute_simple_command(c->cmd2);
 
 	    		}
 	    	//parent process only
