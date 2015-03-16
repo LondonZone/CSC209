@@ -412,7 +412,7 @@ int execute_complex_command(command *c) {
 	    	//parent process only
 	 		wait(&status1);
 	 		wait(&status2);
-	    	if((WIFEXITED(status1) || WIFEXITED(status2))
+	    	if(WIFEXITED(status1) || WIFEXITED(status2))
 	    	{
         		int temp1 = WEXITSTATUS(status1);
         		int temp2 = WEXITSTATUS(status2);
