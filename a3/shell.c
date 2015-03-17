@@ -454,11 +454,13 @@ int execute_complex_command(command *c) {
     		else if(pid2 == 0) 
     		{
     				////close stdin fd
-	        		if(close(pfd[1]) == -1){
+	        		if(close(pfd[1]) == -1)
+	        		{
 	        			perror("close()");
 	        			exit(1);
 	        		}
-	        		if((close(fileno(stdin)) == -1){
+	        		if(close(fileno(stdin)) == -1)
+	        		{
 	        			perror("close()");
 	        			exit(1);
 	        		}
