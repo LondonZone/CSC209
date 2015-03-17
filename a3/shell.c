@@ -104,22 +104,27 @@ int execute_cd(char** words) {
 	 *   wrong.
 	 */
 	
+	//words is NULL pointer
   	if(words == NULL){
-  		return EXIT_FAILURE; //("words is NULL");
+  		return EXIT_FAILURE; 
   	}
+
+  	//second string is NULL;
   	if(words[1] == NULL)
   	{
-  		return EXIT_FAILURE; //("second string is NULL");
+  		return EXIT_FAILURE; 
   	}
+
+  	// invalid command
   	if((strcmp(words[0],"cd")  != 0))
   	{
-  		return EXIT_FAILURE; //("invalid command");
+  		return EXIT_FAILURE; 
   	}
+  	// if directory name too long
   	if(strlen(words[1]) > MAX_DIRNAME){
   		return EXIT_FAILURE;
   	}
 	
-
      //Note chdir works well with both relative and absolute path
      int check = chdir(words[1]);
      if(check == -1){
@@ -172,7 +177,7 @@ int execute_command(char **tokens) {
 	 * Function returns only in case of a failure (EXIT_FAILURE).
 	 */
 
-
+     
 	 return  execvp(tokens[0],tokens);
 	 //The return value  of exevp is -1 upon error
 }
@@ -216,7 +221,7 @@ int execute_nonbuiltin(simple_command *s) {
         	perror("dup2");
         	exit(1); 
         }
-        // close Read end
+        // close Read end, file descriptor
     	if((close(fd)) == -1) 
     	{
         	perror("close");
@@ -242,9 +247,9 @@ int execute_nonbuiltin(simple_command *s) {
     	if((dup2(fd,STDOUT_FILENO)) == -1)
     	{
     		perror("dup2");
-        	exit(1); //redirect stdin
+        	exit(1); 
     	} 
-    	// close Read end
+    	// close write end, file descriptor
     	if((close(fd)) == -1) 
     	{
         	perror("close");
@@ -269,6 +274,7 @@ int execute_nonbuiltin(simple_command *s) {
 			perror("dup2");
         	exit(1); //redirect stdin
 		} 
+		// close stderr, file descriptor
     	if((close(fd)) == -1) 
     	{
         	perror("close");
@@ -276,6 +282,7 @@ int execute_nonbuiltin(simple_command *s) {
     	}
     	
 	}    
+
 	//execute the command using the tokens
 	execute_command(s->tokens); 
 	return 0;
@@ -311,12 +318,12 @@ int execute_simple_command(simple_command *cmd) {
 	else{ /*if not builtin command */
 		pid_t pid;
     	pid = fork();
-    	if (pid == -1) 
+    	if(pid == -1) 
     	{
 			perror("fork");
 			exit(1);
 		}
-    	if (pid == 0)
+    	if(pid == 0)
     	{  //child process
         	execute_nonbuiltin(cmd);
         	exit(0);
@@ -385,7 +392,6 @@ int execute_complex_command(command *c) {
 		 pipe(pfd); // initialize pipe
 
 		
-
 		/**
 		 * TODO: Fork a new process.
 		 * In the child:
@@ -447,38 +453,52 @@ int execute_complex_command(command *c) {
     		// second child process only
     		else if(pid2 == 0) 
     		{
-
-	        		close(pfd[1]);//close stdin fd
-	        		close(fileno(stdin));
+    				////close stdin fd
+	        		if(close(pfd[1]) == -1){
+	        			perror("close()");
+	        			exit(1);
+	        		}
+	        		if((close(fileno(stdin)) == -1){
+	        			perror("close()");
+	        			exit(1);
+	        		}
 	        		if((dup2(pfd[0],STDIN_FILENO)) == -1)
 					{
 						perror("dup2");
         				exit(1); //redirect stdin
 					} 
-	        		close(pfd[0]);// close stdout fd
+					// close stdout fd
+	        		if(close(pfd[0]) == -1){
+	        			perror("close()");
+        				exit(1);
+	        		}
 
 	        		execute_complex_command(c->cmd2);
-	        		//printf("child 2 reached\n");
 	        		exit(0);
 	    	}
 
 	    	/*close both ends of the pipe inside parent process */
-	    	close(pfd[1]);
-	        close(pfd[0]);
+	    	if(close(pfd[1]) == -1){
+	    		perror("close()");
+        		exit(1);
+	    	}
+	        if(close(pfd[0]) == -1){
+	        	perror("close()");
+        		exit(1);	
+	        }
 
-	    	/* parent process only */
-	 		wait(&status1);
-	 		wait(&status2);
-	    	if(WIFEXITED(status1) != 0 || WIFEXITED(status2) != 0)
+	    	/* parent process only, wait for child process to execute */
+	    	if(wait(&status1) ==  -1)
 	    	{
-        		int temp1 = WEXITSTATUS(status1);
-        		int temp2 = WEXITSTATUS(status2);
-        		if((temp1 || temp2) == -1)
-        		{
-					perror("wait");
-					exit(1);
-					
-        		}
+        		
+				perror("wait");
+				exit(1);
+        	}
+        	if(wait(&status2) ==  -1)
+	    	{
+        		
+				perror("wait");
+				exit(1);
         	}
 	    	
 
